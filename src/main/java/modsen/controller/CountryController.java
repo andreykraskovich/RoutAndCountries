@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class CountryController {
     private CountryServiceImpl countryService;
@@ -42,15 +44,16 @@ public class CountryController {
     }
 
     @GetMapping(value = "/routing/alghoritm/{from}/{to}")
-    public ResponseEntity<?> getRoute(@PathVariable String from, @PathVariable String to) {
+    public ResponseEntity<List<String>> getRouting(@PathVariable String from, @PathVariable String to) {
         Country fromCountry = countryService.getByCode(from);
         Country toCountry = countryService.getByCode(to);
 
         Routing routing = new Routing();
-        final boolean routeExists = routing.getRoute(fromCountry, toCountry);
+        final boolean routeExists = !routing.getRouting(fromCountry, toCountry).isEmpty();
 
         return routeExists
-                ? new ResponseEntity<>(HttpStatus.OK)
+                ? new ResponseEntity(routing.getRouting(fromCountry, toCountry), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }
+
